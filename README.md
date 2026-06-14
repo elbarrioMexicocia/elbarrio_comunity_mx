@@ -15,7 +15,7 @@ Conecta personas en un radio de 5km para transacciones inmediatas: comida casera
 - ⚡ **Ofertas en tiempo real** - Anunciam y contacta instantáneamente  
 - 💬 **Chat directo** - Comunicación inmediata con WebSocket
 - 🌙 **Tema oscuro profesional** - Interfaz moderna y legible
-- 📱 **Responsive design** - Funciona en mobile, tablet y desktop
+- 📱 **Mobile-first / Web nativa** - Optimizado para mobile como web app (responsive + PWA), con posible evolución a app nativa más adelante
 - 🔐 **Autenticación segura** - JWT + encriptación
 - 🗺️ **Mapa interactivo** - Visualiza ofertas en el área
 - 💳 **Sistema de pagos** - Escrow opcional con Stripe
@@ -91,7 +91,6 @@ docker-compose logs -f
 - [Database Schema](docs/DATABASE.md) - Estructura BD
 - [Setup Guide](docs/SETUP.md) - Instalación detallada
 - [Deployment](docs/DEPLOYMENT.md) - Cómo deployar
-- [Contributing](CONTRIBUTING.md) - Guía para contribuir
 
 ## 🛠️ Stack Tecnológico
 
@@ -114,6 +113,10 @@ docker-compose logs -f
 - Railway (producción)
 - Vercel (frontend)
 - GitHub Actions (CI/CD)
+
+## 📱 Estrategia Mobile
+
+La prioridad es **web nativa para mobile**: una experiencia responsive/PWA que funcione perfecto en el navegador del celular (sin fricción de instalación, deploy rápido vía Vercel). Una vez validado el producto y con tracción de usuarios, se evaluará migrar a una **app nativa** (iOS/Android, ej. React Native o Capacitor) reusando la mayor parte de la lógica del frontend.
 
 ## 📋 Roadmap
 
@@ -153,7 +156,7 @@ docker-compose logs -f
 
 ### Fase 6+: Mejoras (v1.0) 🔄
 - [ ] AI Agents
-- [ ] Mobile app
+- [ ] Mobile app nativa (post web-mobile, ver estrategia mobile abajo)
 - [ ] Verificación
 - [ ] Multi-ciudad
 
@@ -168,8 +171,6 @@ Nos encanta recibir contribuciones!
 3. Commit: `git commit -m "[FEATURE] Descripción"`
 4. Push: `git push origin feature/mi-feature`
 5. Abre Pull Request
-
-Lee [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles.
 
 ### Estándares de Código
 

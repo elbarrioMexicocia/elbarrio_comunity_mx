@@ -26,19 +26,16 @@ Conecta personas en un radio de 5km para transacciones inmediatas: comida casera
 ```
 comunity/
 ├── frontend/          # React + Vite
-├── backend/           # Node.js + Express
-├── database/          # Schemas SQL
-├── docs/              # Documentación
+├── backend/           # Fast API (Python) 
+├── database/          # Schemas SQL (Supabase) 
+├── docs/              # Documentación 
 └── scripts/           # Scripts útiles
 ```
 
 ## 🚀 Quick Start
 
 ### Requisitos
-- Node.js 18+
-- PostgreSQL 13+
-- Redis 6+
-- Docker (opcional)
+
 
 ### Instalación Local
 
@@ -94,25 +91,31 @@ docker-compose logs -f
 
 ## 🛠️ Stack Tecnológico
 
-### Frontend
-- React 18
-- Vite
-- TailwindCSS / Custom CSS
-- Socket.io (cliente)
-- Mapbox GL
-
-### Backend
-- Node.js + Express
-- PostgreSQL + PostGIS
-- Redis
-- Socket.io
-- JWT Authentication
-
 ### DevOps
-- Docker + Docker Compose
 - Railway (producción)
-- Vercel (frontend)
+- Vercel/ClaudeFlare (frontend)
 - GitHub Actions (CI/CD)
+- Didit (seguridad)
+
+## Licencias
+- Railway
+- ClaudeFlare
+- Notion
+- Supabase
+- App de Comunicación 
+- Stitch / posible Design
+
+## Roles 
+- Jose Armando - Product, Front & Design
+- Ivan - Backend, DevOps
+- Ricardo - Backend, DevOps
+
+## Tipo de Usuario
+- Full view (Ops)
+- Ofertante
+- Clientes
+
+- HTML DE PROPOTOTIPO DE DISEÑO
 
 ## 📱 Estrategia Mobile
 
@@ -125,24 +128,25 @@ La prioridad es **web nativa para mobile**: una experiencia responsive/PWA que f
 - [x] Prototipo HTML
 - [x] Documentación inicial
 
-### Fase 1: Backend (Semana 2-3) 🔵
+### Fase 1: Frontend/Backend(Semana 2-6)  🟢
 - [ ] Autenticación JWT
-- [ ] User management
-- [ ] Broadcasts CRUD
-- [ ] Location queries
-- [ ] WebSocket setup
-
-### Fase 2: Frontend (Semana 4-5) 🟢
+- [ ] Fraud / Security 
+- [ ] Creacion de Usuarios 
+- [ ] Funnel / Onboarding 
+- [ ] Set up Canales de Comunicación
+- [ ] Home
 - [ ] Login/Signup
 - [ ] Feed de ofertas
-- [ ] Crear broadcast
 - [ ] Mapa
 - [ ] Perfil
+- [ ] Primer prototipo /Página HTML
+- [ ] Conexión Digital de Negocios/Usuarios
 
-### Fase 3: Tiempo Real (Semana 6) ⚡
+### Fase 2: Tiempo Real (Semana 6) ⚡
 - [ ] Chat
 - [ ] Notificaciones
 - [ ] Feed live
+- [ ] Agente AI API (sCRAPING)
 
 ### Fase 4: Pagos (Semana 7) 💳
 - [ ] Stripe integration
@@ -150,9 +154,8 @@ La prioridad es **web nativa para mobile**: una experiencia responsive/PWA que f
 - [ ] Transacciones
 
 ### Fase 5: Deploy (Semana 8) 🚀
-- [ ] Railway
-- [ ] Vercel
 - [ ] Monitoreo
+- [ ] Testing 
 
 ### Fase 6+: Mejoras (v1.0) 🔄
 - [ ] AI Agents

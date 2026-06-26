@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Barrio — Economía local en tiempo real</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --cyan: #00C8F0;
+  --green: #00E87A;
+  --bg: #0F1117;
+  --surface: #1C1E27;
+  --surface2: #22252F;
+  --border: #2A2D3A;
+  --border2: #353847;
+  --text: #E8E8EC;
+  --text2: #9A9BA8;
+  --text3: #5A5C6B;
+  --cat-food: #FF6B35;
+  --cat-service: #4ECDC4;
+  --cat-item: #F9C74F;
+  --cat-class: #A78BFA;
+  --cat-request: #FF6B9D;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem 1rem;
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--cyan), var(--green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon svg { display: block; }
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-wordmark {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.03em;
+}
+
+.logo-sub {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(0, 232, 122, 0.08);
+  border: 1px solid rgba(0, 232, 122, 0.3);
+  color: var(--green);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  padding: 11px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover { color: var(--text2); }
+.tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── STAT CARDS ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--cyan), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── FILTER CHIPS ── */
+.filter-chips {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.chip {
+  padding: 5px 13px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text2);
+  background: var(--surface);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chip:hover { border-color: var(--border2); color: var(--text); }
+.chip.active { background: linear-gradient(135deg, var(--cyan), var(--green)); color: #0F1117; border-color: transparent; font-weight: 600; }
+
+/* ── OFFER CARDS ── */
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 580px) {
+  .offers-grid { grid-template-columns: 1fr; }
+}
+
+.offer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+}
+
+.offer-card:hover {
+  border-color: rgba(0, 200, 240, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 200, 240, 0.1);
+}
+
+.offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.offer-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.offer-distance {
+  font-size: 11px;
+  background: rgba(0, 200, 240, 0.08);
+  color: var(--cyan);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 200, 240, 0.2);
+  white-space: nowrap;
+}
+
+.offer-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.offer-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.offer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.offer-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.offer-availability {
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.offer-rating {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.contact-btn {
+  background: linear-gradient(135deg, var(--cyan), var(--green));
+  color: #0F1117;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.contact-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.contact-btn:active { transform: scale(0.98); }
+
+/* ── ANNOUNCE ── */
+.announce-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.announce-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: var(--text);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+}
+
+input, select, textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--surface2);
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder, textarea::placeholder { color: var(--text3); }
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(0, 200, 240, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 200, 240, 0.08);
+}
+
+textarea { resize: vertical; min-height: 70px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 580px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+.broadcast-btn {
+  background: linear-gradient(135deg, var(--cyan), var(--green));
+  color: #0F1117;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-top: 0.5rem;
+}
+
+.broadcast-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 200, 240, 0.25);
+}
+
+.broadcast-btn:active { transform: scale(0.98); }
+
+/* ── MAP ── */
+.map-container {
+  width: 100%;
+  height: 340px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+
+.map-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px; height: 150px;
+  border: 1.5px solid rgba(0, 200, 240, 0.4);
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.map-center::before {
+  content: '';
+  position: absolute;
+  inset: -30px;
+  border: 1px solid rgba(0, 200, 240, 0.15);
+  border-radius: 50%;
+}
+
+.map-center::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(0, 200, 240, 0.2);
+}
+
+.map-person {
+  position: absolute;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 2px solid var(--bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+
+.map-person:hover { transform: scale(1.5); z-index: 100; }
+
+.map-hint {
+  font-size: 11px;
+  color: var(--text3);
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+/* ── PROFILE ── */
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+}
+
+.profile-header {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  color: #0F1117;
+  flex-shrink: 0;
+}
+
+.profile-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.profile-info p { font-size: 12px; color: var(--text2); margin: 2px 0; }
+
+.section-divider {
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+  padding-top: 1rem;
+}
+
+.section-divider h3 {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.profile-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.profile-stat:last-child { border-bottom: none; }
+.profile-stat label { color: var(--text2); font-weight: normal; }
+.profile-stat value { font-weight: 600; color: var(--text); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text3);
+}
+
+.empty-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.4; }
+.empty-state p { font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="3" fill="#0F1117"/>
+          <circle cx="10" cy="10" r="8" stroke="#0F1117" stroke-width="1.5" stroke-dasharray="2.5 2"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-wordmark">El Barrio</span>
+        <span class="logo-sub">Economía local</span>
+      </div>
+    </div>
+    <div class="live-pill">
+      <div class="pulse-dot"></div>
+      28 personas cerca · 5 km
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(event, 'discover')">Descubrir</button>
+    <button class="tab-btn" onclick="switchTab(event, 'announce')">Anunciar</button>
+    <button class="tab-btn" onclick="switchTab(event, 'map')">Mapa</button>
+    <button class="tab-btn" onclick="switchTab(event, 'profile')">Mi perfil</button>
+  </div>
+
+  <!-- DISCOVER -->
+  <div id="discover" class="section active">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Personas cerca</div>
+        <div class="stat-value">28</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ofertas activas</div>
+        <div class="stat-value">42</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Activos ahora</div>
+        <div class="stat-value">24</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tu radio</div>
+        <div class="stat-value">5 km</div>
+      </div>
+    </div>
+
+    <div class="filter-chips" id="filterChips"></div>
+    <div class="offers-grid" id="offersGrid"></div>
+  </div>
+
+  <!-- ANNOUNCE -->
+  <div id="announce" class="section">
+    <div class="announce-card">
+      <div class="announce-title">Anuncia tu oferta</div>
+
+      <div class="form-group">
+        <label>¿Qué ofreces o buscas?</label>
+        <input type="text" id="offering" placeholder="Ej: Tamales caseros, Reparación de autos…" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Precio / Tarifa</label>
+          <input type="text" id="price" placeholder="$40/hora, $300, negociable" />
+        </div>
+        <div class="form-group">
+          <label>Disponible por (horas)</label>
+          <input type="number" id="duration" min="1" max="24" value="3" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="description" placeholder="Cuéntale más a la gente sobre lo que ofreces…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="offeringType">
+          <option value="food">🍜 Comida casera</option>
+          <option value="service">🔧 Servicio / Reparación</option>
+          <option value="item">📦 Vender algo</option>
+          <option value="job">💼 Buscar trabajador</option>
+          <option value="request">🙏 Buscar ayuda</option>
+          <option value="class">📚 Clases / Cursos</option>
+        </select>
+      </div>
+
+      <button class="broadcast-btn" onclick="announceOffer()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Anunciar en 5 km a la redonda
+      </button>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map" class="section">
+    <div class="map-container" id="mapContainer">
+      <div class="map-grid"></div>
+      <div class="map-center"></div>
+    </div>
+    <p class="map-hint">Punto azul = tu ubicación &nbsp;·&nbsp; Puntos de color = personas con ofertas activas</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total en área</div>
+        <div class="stat-value" id="mapTotal">42</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dist. promedio</div>
+        <div class="stat-value">2.1 km</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rating promedio</div>
+        <div class="stat-value">4.8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Miembros</div>
+        <div class="stat-value">1.2k</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile" class="section">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar">DC</div>
+        <div class="profile-info">
+          <h2>Doña Carmen</h2>
+          <p>Especialista en Comida Casera 🍲</p>
+          <p style="margin-top: 5px; color: #00E87A; font-size: 12px;">🟢 Activa ahora · 1.8 km del centro</p>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <h3>Ofertas actuales</h3>
+        <div style="font-size: 13px; color: var(--text2); line-height: 2;">
+          Tamales caseros (docena) — $50<br/>
+          Pozole completo — $20 porción<br/>
+          Enchiladas verdes (6) — $45<br/>
+          Pastelería — $8–15 por pieza
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <h3>Transacciones de hoy</h3>
+        <div class="profile-stat"><label>Tamales (2 docenas)</label><value>$100</value></div>
+        <div class="profile-stat"><label>Pozole (4 porciones)</label><value>$80</value></div>
+        <div class="profile-stat"><label>Enchiladas verdes</label><value>$45</value></div>
+      </div>
+
+      <div class="section-divider">
+        <h3>Estadísticas</h3>
+        <div class="profile-stat"><label>Órdenes esta semana</label><value>28</value></div>
+        <div class="profile-stat"><label>Ganancias esta semana</label><value>$580</value></div>
+        <div class="profile-stat"><label>Tasa de respuesta</label><value>100%</value></div>
+        <div class="profile-stat"><label>Calificación</label><value>⭐ 5.0 / 5</value></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+const offers = [
+  { id:1,  name:'Doña Carmen',        distance:0.8, title:'🍲 Tamales caseros',          desc:'Oaxaqueños, rajas con queso, verdes. Docena',           price:'$50/docena', hours:4,  rating:5.0, category:'food',    online:true },
+  { id:2,  name:'Don Roberto',         distance:1.2, title:'🔧 Reparación de autos',      desc:'Mecánica general, frenos, suspensión',                  price:'$40/hora',   hours:8,  rating:4.9, category:'service', online:true },
+  { id:3,  name:'La Pastelería de Ana',distance:1.5, title:'🎂 Postres y pasteles',        desc:'Hechos en casa, sin conservantes',                      price:'$8–15/pieza',hours:5,  rating:4.8, category:'food',    online:true },
+  { id:4,  name:'Luis Refacciones',    distance:2.1, title:'⚙️ Refacciones para autos',   desc:'Motos y autos, piezas originales',                      price:'Variable',   hours:10, rating:4.7, category:'item',    online:true },
+  { id:5,  name:'Doña María',          distance:0.5, title:'🍜 Menudo casero',             desc:'Consomé de cabeza. Viernes, sábados y domingos',        price:'$18/porción',hours:3,  rating:5.0, category:'food',    online:true },
+  { id:6,  name:'El Electricista Juan',distance:2.8, title:'⚡ Electricista',              desc:'Instalaciones, reparaciones, mantenimiento',            price:'$50/hora',   hours:6,  rating:4.8, category:'service', online:true },
+  { id:7,  name:'Doña Rosita',         distance:3.2, title:'👕 Costura y arreglos',        desc:'Ropa, cortinas, mochilas personalizadas',               price:'$15–50',     hours:7,  rating:4.9, category:'service', online:true },
+  { id:8,  name:'Miguel Carpintería',  distance:1.8, title:'🪑 Carpintería y muebles',     desc:'Muebles a medida, reparación de madera',                price:'$60/hora',   hours:9,  rating:4.6, category:'service', online:true },
+  { id:9,  name:'Doña Lupita',         distance:2.5, title:'🌮 Enchiladas verdes',          desc:'Hechizo de la abuela. Docena',                          price:'$45/docena', hours:3,  rating:5.0, category:'food',    online:true },
+  { id:10, name:'Plomería Express',    distance:1.9, title:'🚰 Plomero',                   desc:'Fugas, tuberías, desagües',                             price:'$35/hora',   hours:8,  rating:4.8, category:'service', online:true },
+  { id:11, name:'Carlos TI',           distance:2.2, title:'💻 Reparación de computadoras',desc:'Laptops, desktops, virus, configuración',               price:'$30–80',     hours:5,  rating:4.7, category:'service', online:true },
+  { id:12, name:'Doña Lilia',          distance:1.3, title:'🍪 Galletas y dulces',          desc:'Polvorones, mantecadas, empanadas',                    price:'$25/caja',   hours:6,  rating:4.9, category:'food',    online:true },
+];
+
+const categories = [
+  { label:'Todos',      key:'all',     color:null },
+  { label:'Comida',     key:'food',    color:'#FF6B35' },
+  { label:'Servicios',  key:'service', color:'#4ECDC4' },
+  { label:'Refacciones',key:'item',    color:'#F9C74F' },
+  { label:'Clases',     key:'class',   color:'#A78BFA' },
+];
+
+let activeFilter = 'all';
+
+function switchTab(e, tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  e.target.classList.add('active');
+  if (tab === 'map') renderMap();
+}
+
+function setFilter(key) {
+  activeFilter = key;
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.key === key);
+  });
+  renderOffers();
+}
+
+function renderFilterChips() {
+  document.getElementById('filterChips').innerHTML = categories.map(c =>
+    `<div class="chip ${c.key === 'all' ? 'active' : ''}" data-key="${c.key}" onclick="setFilter('${c.key}')">
+      ${c.color ? `<span style="width:7px;height:7px;border-radius:50%;background:${c.color};display:inline-block;"></span>` : ''}
+      ${c.label}
+    </div>`
+  ).join('');
+}
+
+function getFiltered() {
+  if (activeFilter === 'all') return offers;
+  return offers.filter(o => o.category === activeFilter);
+}
+
+function renderOffers() {
+  const list = getFiltered();
+  if (!list.length) {
+    document.getElementById('offersGrid').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">📭</div><p>Sin ofertas en esta categoría</p></div>';
+    return;
+  }
+  document.getElementById('offersGrid').innerHTML = list.map(o => `
+    <div class="offer-card" onclick="contactPerson(${o.id})">
+      <div class="offer-header">
+        <div class="offer-name">${o.name}</div>
+        <div class="offer-distance">${o.distance} km</div>
+      </div>
+      <div class="offer-title">${o.title}</div>
+      <div class="offer-desc">${o.desc}</div>
+      <div class="offer-meta">
+        <div class="offer-price">${o.price}</div>
+        <div class="offer-rating">⭐ ${o.rating}</div>
+      </div>
+      <div class="offer-availability">Disponible ${o.hours}h · ${o.online ? '🟢 Activo' : '⚫ Offline'}</div>
+      <button class="contact-btn" onclick="event.stopPropagation(); contactPerson(${o.id})">💬 Contactar ahora</button>
+    </div>
+  `).join('');
+}
+
+function renderMap() {
+  const container = document.getElementById('mapContainer');
+  const colorMap = { food:'#FF6B35', service:'#4ECDC4', item:'#F9C74F', job:'#00C8F0', class:'#A78BFA', request:'#FF6B9D' };
+  const dots = offers.map(o => {
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = Math.random() * 60 + 15;
+    const x = 50 + Math.cos(angle) * dist;
+    const y = 50 + Math.sin(angle) * dist;
+    return `<div class="map-person" style="left:${x}%;top:${y}%;background:${colorMap[o.category]};" title="${o.name}: ${o.title}"></div>`;
+  }).join('');
+  container.innerHTML = `<div class="map-grid"></div><div class="map-center"></div>` + dots;
+  document.getElementById('mapTotal').textContent = offers.length;
+}
+
+function announceOffer() {
+  const offering = document.getElementById('offering').value.trim();
+  const price    = document.getElementById('price').value.trim();
+  const duration = document.getElementById('duration').value;
+  if (!offering || !price) { alert('Por favor completa oferta y precio'); return; }
+  alert(`✓ ¡Anuncio enviado!\n\n"${offering} — ${price}"\n\nVisible para personas en 5 km durante ${duration} horas.`);
+  document.getElementById('offering').value = '';
+  document.getElementById('price').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('duration').value = '3';
+}
+
+function contactPerson(id) {
+  const p = offers.find(o => o.id === id);
+  alert(`Conectando con ${p.name}…\n\nOferta: ${p.title}\nPrecio: ${p.price}\n\nSe conectarán por chat al instante.`);
+}
+
+renderFilterChips();
+renderOffers();
+</script>
+</body>
+</html>

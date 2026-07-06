@@ -8,7 +8,7 @@ comunity/
 ├── CONTRIBUTING.md              # Guía para contribuidores
 ├── LICENSE                      # Licencia (MIT recomendado)
 ├── .gitignore                   # Archivos a ignorar
-├── package.json                 # Dependencias Node
+├── package.json                 # Frontend/tooling only; backend usa Python
 ├── .env.example                 # Variables de entorno ejemplo
 ├── docker-compose.yml           # Setup con Docker
 ├── 
@@ -44,64 +44,22 @@ comunity/
 │   ├── package.json
 │   └── .env.example
 │
-├── backend/                     # Node.js - API
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.js
-│   │   │   ├── redis.js
-│   │   │   └── env.js
-│   │   ├── controllers/
-│   │   │   ├── authController.js
-│   │   │   ├── broadcastController.js
-│   │   │   ├── conversationController.js
-│   │   │   ├── userController.js
-│   │   │   └── transactionController.js
-│   │   ├── models/
-│   │   │   ├── User.js
-│   │   │   ├── Broadcast.js
-│   │   │   ├── Conversation.js
-│   │   │   ├── Message.js
-│   │   │   └── Transaction.js
-│   │   ├── routes/
-│   │   │   ├── auth.js
-│   │   │   ├── broadcasts.js
-│   │   │   ├── conversations.js
-│   │   │   ├── users.js
-│   │   │   └── transactions.js
-│   │   ├── middleware/
-│   │   │   ├── auth.js
-│   │   │   ├── errorHandler.js
-│   │   │   ├── validation.js
-│   │   │   └── logger.js
-│   │   ├── services/
-│   │   │   ├── broadcastService.js
-│   │   │   ├── matchingService.js
-│   │   │   ├── notificationService.js
-│   │   │   └── paymentService.js
-│   │   ├── socket/
-│   │   │   └── socketHandler.js
-│   │   ├── workers/
-│   │   │   ├── broadcastCleanup.js
-│   │   │   └── recommendationAgent.js
-│   │   ├── utils/
-│   │   │   ├── validators.js
-│   │   │   ├── distance.js
-│   │   │   └── logger.js
-│   │   └── app.js
-│   ├── migrations/              # Database migrations
-│   │   ├── 001_create_users.sql
-│   │   ├── 002_create_broadcasts.sql
-│   │   ├── 003_create_conversations.sql
-│   │   └── 004_create_transactions.sql
-│   ├── seeds/                   # Data seeding
-│   │   └── dev.sql
+├── backend/                     # FastAPI - API
+│   ├── app/
+│   │   ├── api/routes/
+│   │   ├── core/
+│   │   ├── db/
+│   │   └── main.py
+│   ├── alembic/                 # Database migrations
+│   │   └── versions/
+│   ├── scripts/
+│   │   └── dev.py
 │   ├── tests/
-│   │   ├── unit/
-│   │   ├── integration/
-│   │   └── api.test.js
-│   ├── package.json
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   ├── pyproject.toml
 │   ├── .env.example
-│   └── server.js                # Entry point
+│   └── README.md
 │
 ├── database/                    # Database schemas
 │   ├── schema.sql
@@ -167,8 +125,9 @@ cd comunity
 
 # Backend
 cd backend
-npm install
-npm run dev
+python3.12 scripts/dev.py install
+source .venv/bin/activate
+python scripts/dev.py run
 
 # Frontend (otra terminal)
 cd frontend
@@ -208,7 +167,7 @@ MIT
 ## Estándares de Código
 
 - JavaScript/React: Prettier + ESLint
-- Backend: Node.js best practices
+- Backend: FastAPI + Python 3.12 + Alembic
 - Comentarios en español
 - Tests para features nuevos
 
@@ -228,9 +187,9 @@ Tipos: FEATURE, FIX, DOCS, STYLE, REFACTOR, TEST
 ## Testing
 
 ```bash
-npm test              # Correr tests
-npm run test:watch   # Watch mode
-npm run coverage     # Coverage report
+cd backend
+source .venv/bin/activate
+python scripts/dev.py check
 ```
 ```
 
@@ -279,32 +238,20 @@ postgres_data/
   "description": "Plataforma de economía local en tiempo real",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:backend": "cd backend && npm run build",
-    "build:frontend": "cd frontend && npm run build",
-    "test": "npm run test:backend && npm run test:frontend",
-    "test:backend": "cd backend && npm test",
-    "test:frontend": "cd frontend && npm test",
-    "lint": "npm run lint:backend && npm run lint:frontend",
-    "lint:backend": "cd backend && npm run lint",
-    "lint:frontend": "cd frontend && npm run lint"
-  },
-  "dependencies": {
-    "concurrently": "^7.0.0"
+    "dev": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py run'",
+    "setup": "echo 'Backend: cd backend && python3.12 scripts/dev.py install'",
+    "test": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py test'",
+    "lint": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py lint'"
   }
 }
 ```
 
 ### 2.5 docker-compose.yml
 ```yaml
-version: '3.8'
-
 services:
   postgres:
-    image: postgis/postgis:latest
+    image: postgis/postgis:16-3.4
+    platform: linux/amd64
     environment:
       POSTGRES_USER: comunity
       POSTGRES_PASSWORD: desarrollo123
@@ -319,19 +266,9 @@ services:
     ports:
       - "6379:6379"
 
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      DATABASE_URL: postgresql://comunity:desarrollo123@postgres:5432/comunity_dev
-      REDIS_URL: redis://redis:6379
-      NODE_ENV: development
-    volumes:
-      - ./backend:/app
+  # Docker se limita a dependencias locales.
+  # Backend: correr desde backend/.venv y deployar a Railway.
+  # Hosted DB: Supabase.
 
   frontend:
     build: ./frontend
@@ -370,8 +307,8 @@ volumes:
 ```
 
 Tareas específicas:
-- [ ] Setup Express + PostgreSQL
-- [ ] Modelos de BD (User, Broadcast, etc.)
+- [ ] Setup FastAPI + Alembic + PostGIS
+- [ ] Migración mínima (User, Broadcast, Conversation, Message)
 - [ ] Endpoints de autenticación
 - [ ] Endpoints de broadcasts
 - [ ] Validación y errores
@@ -405,7 +342,7 @@ Tareas específicas:
 ```
 
 Tareas específicas:
-- [ ] Socket.io setup
+- [ ] WebSocket setup cuando el chat lo requiera
 - [ ] Chat messages
 - [ ] Broadcast updates
 - [ ] Presencia de usuarios
@@ -485,7 +422,7 @@ git commit -m "[SETUP] Estructura inicial del proyecto"
 - .gitignore
 
 # 2. Backend base
-git commit -m "[BACKEND] Setup Express + PostgreSQL"
+git commit -m "[BACKEND] Setup FastAPI + PostGIS"
 - Server básico
 - Conexión a BD
 - Modelos iniciales
@@ -558,7 +495,8 @@ cd comunity
 
 # Backend
 cd backend
-npm install
+python3.12 scripts/dev.py install
+source .venv/bin/activate
 cp .env.example .env
 cd ..
 

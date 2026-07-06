@@ -8,7 +8,7 @@
 2. **Nombre del repo**: `comunity`
 3. **Descripción**: "Plataforma de economía local en tiempo real - 5km radius"
 4. **Tipo**: Public
-5. **Agregar .gitignore**: Node
+5. **Agregar .gitignore**: Python + Node frontend
 6. **Licencia**: MIT
 7. **Crear repository**
 
@@ -53,11 +53,13 @@ Plataforma de economía local en tiempo real. 5km radius para transacciones inme
 ## Quick Start
 
 ```bash
-# Docker (recomendado)
-docker-compose up -d
+# Dependencias locales
+docker-compose up -d postgres
 
-# Manual
-npm run dev
+# Backend
+cd backend
+source .venv/bin/activate
+python scripts/dev.py run
 ```
 
 Ver [documentación completa](docs/SETUP.md)
@@ -84,9 +86,9 @@ Usar MIT license (copiar de GitHub)
   "description": "Plataforma de economía local en tiempo real",
   "private": true,
   "scripts": {
-    "dev": "echo 'Run: cd backend && npm run dev (in one terminal) then cd frontend && npm run dev (in another)'",
-    "setup": "bash scripts/setup.sh",
-    "test": "echo 'Tests coming soon'"
+    "dev": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py run'",
+    "setup": "echo 'Backend: cd backend && python3.12 scripts/dev.py install'",
+    "test": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py test'"
   }
 }
 ```
@@ -96,60 +98,34 @@ Usar MIT license (copiar de GitHub)
 ```bash
 # Backend estructura
 cd backend
-mkdir -p src/{config,controllers,models,routes,middleware,services,socket,workers,utils}
-mkdir -p migrations seeds tests/{unit,integration}
+mkdir -p app/{api/routes,core,db} alembic/versions scripts tests
 
-# Backend package.json
-cat > package.json << 'EOF'
-{
-  "name": "comunity-backend",
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "node src/server.js",
-    "start": "NODE_ENV=production node src/server.js",
-    "test": "jest",
-    "lint": "eslint src/"
-  },
-  "dependencies": {
-    "express": "^4.18.0",
-    "dotenv": "^16.0.0",
-    "pg": "^8.8.0",
-    "redis": "^4.0.0",
-    "socket.io": "^4.5.0",
-    "jsonwebtoken": "^9.0.0",
-    "bcryptjs": "^2.4.0"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0",
-    "eslint": "^8.0.0"
-  }
-}
+# Backend requirements
+cat > requirements.txt << 'EOF'
+fastapi[standard]
+sqlalchemy
+psycopg[binary]
+alembic
+pydantic-settings
+uvicorn[standard]
 EOF
 
-# Backend server básico
-cat > src/server.js << 'EOF'
-import express from 'express';
+# Backend app básico
+cat > app/main.py << 'EOF'
+from fastapi import FastAPI
 
-const app = express();
-app.use(express.json());
+app = FastAPI(title="Comunity API")
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 EOF
 
 # Backend .env.example
 cat > .env.example << 'EOF'
-NODE_ENV=development
+ENVIRONMENT=development
 PORT=5000
-DATABASE_URL=postgresql://user:password@localhost:5432/comunity_dev
-REDIS_URL=redis://localhost:6379
+DATABASE_URL=postgresql+psycopg://comunity:desarrollo123@localhost:5432/comunity_dev
 JWT_SECRET=tu_secreto_super_secreto
 MAPBOX_TOKEN=tu_token
 EOF
@@ -215,8 +191,9 @@ docker-compose up -d
 ### Backend
 ```bash
 cd backend
-npm install
-npm run dev
+python3.12 scripts/dev.py install
+source .venv/bin/activate
+python scripts/dev.py run
 ```
 
 ### Frontend

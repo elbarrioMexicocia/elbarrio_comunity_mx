@@ -1,0 +1,4 @@
+interface:
+  display_name: "Comunity Backend"
+  short_description: "Backend setup, migrations, and Railway workflow"
+  default_prompt: "Use $comunity-backend to work on the Comunity FastAPI backend safely."

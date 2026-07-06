@@ -274,8 +274,10 @@ Read: `COMUNITY_ECONOMIC_HUB_GUIDE.md`
 Follow: `COMUNITY_QUICK_START.md`
 ```bash
 git clone <repo>
-npm install
-npm run dev
+cd backend
+python3.12 scripts/dev.py install
+source .venv/bin/activate
+python scripts/dev.py run
 # Open http://localhost:3000
 ```
 
@@ -283,7 +285,7 @@ npm run dev
 Follow: `COMUNITY_DEPLOYMENT_GUIDE.md`
 ```bash
 # Deploy to Vercel + Railway
-npm run deploy
+railway up --detach
 ```
 
 ### Step 5: Launch with Users
@@ -360,7 +362,7 @@ Frontend:
 └── Tailwind CSS
 
 Backend:
-├── Node.js + Express
+├── FastAPI + Python
 ├── PostgreSQL + PostGIS (location)
 ├── Redis (cache + queue)
 └── Claude API (recommendations)

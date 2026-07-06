@@ -583,7 +583,7 @@ const flagSuspicious = async (broadcast) => {
 ```
 Users                    WebSocket (real-time)
   ↓
-Vercel (React)  ←→  Railway (Node.js/Express)
+Vercel (React)  ←→  Railway (FastAPI/Python)
 (Frontend)              (Backend API)
                               ↓
                         PostgreSQL
@@ -665,7 +665,7 @@ setInterval(async () => {
 ## Next Steps
 
 1. Set up PostgreSQL + PostGIS
-2. Build Node.js backend with WebSockets
+2. Build FastAPI backend with PostGIS-backed marketplace APIs
 3. Deploy to Railway
 4. Build React frontend
 5. Deploy to Vercel

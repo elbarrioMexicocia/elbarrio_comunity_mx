@@ -9,6 +9,7 @@ import venv
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_DIR = BACKEND_DIR.parent
 VENV_DIR = BACKEND_DIR / ".venv"
 
 
@@ -43,6 +44,8 @@ def main() -> None:
     subcommands.add_parser("test", help="Run pytest")
     subcommands.add_parser("lint", help="Run ruff")
     subcommands.add_parser("check", help="Run tests, lint, and render Alembic SQL")
+    subcommands.add_parser("hook-install", help="Install repository pre-commit hooks")
+    subcommands.add_parser("hook-run", help="Run pre-commit hooks against all files")
     subcommands.add_parser("migrate", help="Apply Alembic migrations to DATABASE_URL")
     subcommands.add_parser("migration-sql", help="Render Alembic migration SQL without applying it")
 
@@ -78,6 +81,10 @@ def main() -> None:
             result = subprocess.call(command, cwd=BACKEND_DIR)
             if result != 0:
                 raise SystemExit(result)
+    elif args.command == "hook-install":
+        run([python, "-m", "pre_commit", "install"], cwd=REPO_DIR)
+    elif args.command == "hook-run":
+        run([python, "-m", "pre_commit", "run", "--all-files"], cwd=REPO_DIR)
     elif args.command == "migrate":
         run([python, "-m", "alembic", "upgrade", "head"])
     elif args.command == "migration-sql":

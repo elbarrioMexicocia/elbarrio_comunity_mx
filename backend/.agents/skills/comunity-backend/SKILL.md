@@ -30,6 +30,8 @@ python scripts/dev.py run              # local API on :5000
 python scripts/dev.py test             # pytest
 python scripts/dev.py lint             # ruff
 python scripts/dev.py check            # pytest + ruff + Alembic SQL render
+python scripts/dev.py hook-install     # install pre-commit hooks
+python scripts/dev.py hook-run         # run pre-commit hooks against all files
 python scripts/dev.py migrate          # alembic upgrade head
 python scripts/dev.py migration-sql    # render migration SQL only
 ```
@@ -52,9 +54,10 @@ Before finishing backend changes:
 
 1. Activate the backend venv.
 2. Run `python scripts/dev.py check`.
-3. If migrations changed, start local PostGIS from repo root: `docker-compose up -d postgres`.
-4. Run `python scripts/dev.py migrate`.
-5. Verify the app readiness path can connect to the DB when relevant.
+3. Run `python scripts/dev.py hook-run` when hook config or lintable Python files changed.
+4. If migrations changed, start local PostGIS from repo root: `docker-compose up -d postgres`.
+5. Run `python scripts/dev.py migrate`.
+6. Verify the app readiness path can connect to the DB when relevant.
 
 If Docker access fails due sandboxing, rerun Docker commands with escalation. If localhost DB access fails due sandboxing, rerun the Python migration/readiness command with escalation.
 

@@ -58,6 +58,17 @@ source .venv/bin/activate
 python scripts/dev.py check
 ```
 
+## Git Hooks
+
+This repo uses `pre-commit` for the backend lint hook, similar to Husky in npm projects.
+
+```bash
+cd backend
+source .venv/bin/activate
+python scripts/dev.py hook-install
+python scripts/dev.py hook-run
+```
+
 ## Railway
 
 Use Railway's source builder for the FastAPI service. Do not add an app Dockerfile until there is a concrete runtime need. Use Supabase for the hosted PostgreSQL/PostGIS database.

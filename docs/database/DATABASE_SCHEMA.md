@@ -11,6 +11,21 @@
 
 ---
 
+## ESTADO DE IMPLEMENTACIÓN
+
+La primera migración del backend implementa una versión mínima de este schema para validar el flujo inicial:
+
+- `users`
+- `broadcasts`
+- `conversations`
+- `messages`
+
+El resto de tablas y columnas en este documento siguen como diseño de producto futuro. No deben agregarse al schema real hasta que exista el flujo que las mantenga actualizadas.
+
+Para esta iteración, `broadcasts` representa los posts de trabajo/oportunidad que publican los dueños de negocio y que los trabajadores pueden descubrir o contactar.
+
+---
+
 ## DIAGRAMA ER
 
 ```

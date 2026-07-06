@@ -45,20 +45,18 @@ comunity/
 │   │   └── index.js
 │   └── .env.example
 │
-├── 🔌 backend/                       # NODE.JS API
-│   ├── package.json
-│   ├── src/
-│   │   ├── config/                   # Configuración
-│   │   ├── controllers/              # Lógica de rutas
-│   │   ├── models/                   # Modelos de datos
-│   │   ├── routes/                   # Definición de rutas
-│   │   ├── middleware/               # Middleware
-│   │   ├── services/                 # Lógica de negocio
-│   │   ├── app.js                    # Express app
-│   │   └── server.js                 # Entry point
-│   ├── migrations/
-│   ├── seeds/
+├── 🔌 backend/                       # FastAPI API (Python)
+│   ├── app/
+│   │   ├── api/                      # Rutas HTTP
+│   │   ├── core/                     # Configuración
+│   │   ├── db/                       # Conexión a BD
+│   │   └── main.py                   # Entry point FastAPI
+│   ├── alembic/                      # Migraciones
+│   ├── scripts/                      # Comandos de desarrollo Python
 │   ├── tests/
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   ├── pyproject.toml
 │   └── .env.example
 │
 ├── 🗄️ database/                      # DATABASE SCHEMAS
@@ -104,13 +102,13 @@ comunity/
 - `src/services/` - API calls, geolocation
 - `src/styles/` - CSS global, variables, responsive
 
-### 🔌 `/backend` - NODE.JS API
-- `src/config/` - Database, Redis, env setup
-- `src/controllers/` - Lógica de cada endpoint
-- `src/models/` - Sequelize/Knex models
-- `src/routes/` - Definición de endpoints
-- `src/middleware/` - Auth, error handling, logging
-- `src/services/` - Business logic (matching, payments, etc)
+### 🔌 `/backend` - FASTAPI API
+- `app/api/` - Rutas HTTP
+- `app/core/` - Settings y configuración
+- `app/db/` - Conexión SQLAlchemy
+- `alembic/` - Migraciones de base de datos
+- `scripts/dev.py` - Comandos de desarrollo Python
+- `.agents/skills/` - Skills para agentes que contribuyen al backend
 
 ### 🗄️ `/database` - SQL SCRIPTS
 - `migrations/` - Crear/actualizar tablas
@@ -145,7 +143,8 @@ git push -u origin develop
 ```bash
 # Backend
 cd backend
-npm install
+python3.12 scripts/dev.py install
+source .venv/bin/activate
 cp .env.example .env
 
 # Frontend
@@ -154,22 +153,22 @@ npm install
 cp .env.example .env
 ```
 
-### 4. Setup database con Docker
+### 4. Setup database local con Docker
 ```bash
-docker-compose up -d postgres redis
+docker-compose up -d postgres
 ```
 
 ### 5. Correr migraciones
 ```bash
 cd backend
-npm run db:migrate
-npm run db:seed
+source .venv/bin/activate
+python scripts/dev.py migrate
 ```
 
 ### 6. Iniciar desarrollo
 ```bash
 # Terminal 1 - Backend
-cd backend && npm run dev
+cd backend && source .venv/bin/activate && python scripts/dev.py run
 
 # Terminal 2 - Frontend  
 cd frontend && npm run dev
@@ -236,8 +235,9 @@ docs/
 ### Backend
 - Copiar `.env.example` → `.env`
 - Rellenar variables de ambiente
-- `npm install`
-- `npm run db:migrate`
+- `python3.12 scripts/dev.py install`
+- `source .venv/bin/activate`
+- `python scripts/dev.py migrate`
 
 ### Frontend
 - Copiar `.env.example` → `.env`
@@ -247,9 +247,10 @@ docs/
 
 ### Docker
 - Instalar Docker & Docker Compose
-- Correr `docker-compose up -d`
-- Acceder a PostgreSQL en localhost:5432
-- Acceder a Redis en localhost:6379
+- Usarlo para dependencias locales, especialmente PostGIS
+- Correr `docker-compose up -d postgres`
+- Acceder a PostgreSQL/PostGIS en localhost:5432
+- La base de datos hosted será Supabase
 
 ---
 

@@ -126,7 +126,7 @@ Fecha Fin Estimada: Julio 2025
 
 | ID | Feature | Descripción | Estado | Prioridad | Estimación | Responsable |
 |----|---------|-------------|--------|-----------|------------|-------------|
-| B-501 | WebSocket Server | Setup Socket.io | ⬜ Todo | Alta | 6h | Backend |
+| B-501 | WebSocket Server | Setup FastAPI WebSocket support | ⬜ Todo | Alta | 6h | Backend |
 | B-502 | User Connection | Conectar usuario al socket | ⬜ Todo | Alta | 4h | Backend |
 | B-503 | Room Management | Rooms por conversación | ⬜ Todo | Alta | 5h | Backend |
 | B-504 | Connection Events | Connect/disconnect events | ⬜ Todo | Media | 3h | Backend |

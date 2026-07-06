@@ -6,7 +6,7 @@ Conecta personas en un radio de 5km para transacciones inmediatas: comida casera
 
 ![Status](https://img.shields.io/badge/status-MVP%20Development-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Node](https://img.shields.io/badge/node-18+-green)
+![Python](https://img.shields.io/badge/python-3.12-green)
 ![React](https://img.shields.io/badge/react-18+-blue)
 
 ## ✨ Características
@@ -44,30 +44,35 @@ comunity/
 git clone https://github.com/tuuser/comunity.git
 cd comunity
 
-# 2. Instalar dependencias (opción A - manual)
-cd backend && npm install && cd ..
-cd frontend && npm install && cd ..
+# 2. Instalar backend (Python)
+cd backend
+python3.12 scripts/dev.py install
+source .venv/bin/activate
+cp .env.example .env
+cd ..
 
-# 3. Configurar variables de entorno
-cp backend/.env.example backend/.env
+# 3. Configurar frontend cuando exista
 cp frontend/.env.example frontend/.env
 
-# 4. Configurar base de datos
-createdb comunity_dev
-psql comunity_dev < database/schema.sql
+# 4. Levantar PostGIS local y migrar
+docker-compose up -d postgres
+cd backend
+python scripts/dev.py migrate
 
-# 5. Iniciar desarrollo
-npm run dev
+# 5. Iniciar backend
+python scripts/dev.py run
 ```
 
-### Con Docker (opción B - recomendado)
+### Docker Local
 
 ```bash
-# Instalar y correr todo
-docker-compose up -d
+# Docker se usa para dependencias locales, no para producción del backend
+docker-compose up -d postgres
 
-# Ejecutar migraciones
-docker exec comunity-backend npm run db:migrate
+# Ejecutar migraciones desde el backend venv
+cd backend
+source .venv/bin/activate
+python scripts/dev.py migrate
 
 # Ver logs
 docker-compose logs -f
@@ -93,6 +98,7 @@ docker-compose logs -f
 
 ### DevOps
 - Railway (producción)
+- Supabase (base de datos hosted)
 - Vercel/ClaudeFlare (frontend)
 - GitHub Actions (CI/CD)
 - Didit (seguridad)
@@ -187,9 +193,8 @@ Nos encanta recibir contribuciones!
 ```bash
 # Backend
 cd backend
-npm test
-npm run test:watch
-npm run coverage
+source .venv/bin/activate
+python scripts/dev.py check
 
 # Frontend
 cd frontend
@@ -207,6 +212,8 @@ railway init
 railway link
 railway up --detach
 ```
+
+La base de datos hosted será Supabase. Docker/PostGIS queda para desarrollo local y verificación de migraciones.
 
 ### Vercel (Frontend)
 

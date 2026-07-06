@@ -4,10 +4,10 @@
   "description": "Plataforma de economía local en tiempo real - 5km radius",
   "private": true,
   "scripts": {
-    "dev": "echo 'Run: cd backend && npm run dev (in one terminal) then cd frontend && npm run dev (in another)'",
-    "setup": "bash scripts/setup.sh",
-    "test": "echo 'Tests coming soon'",
-    "lint": "echo 'Linting setup needed'"
+    "dev": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py run'",
+    "setup": "echo 'Backend: cd backend && python3.12 scripts/dev.py install'",
+    "test": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py test'",
+    "lint": "echo 'Backend: cd backend && source .venv/bin/activate && python scripts/dev.py lint'"
   },
   "keywords": [
     "economia-local",
@@ -17,8 +17,5 @@
     "comunidad"
   ],
   "author": "Comunity Team",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^7.0.0"
-  }
+  "license": "MIT"
 }

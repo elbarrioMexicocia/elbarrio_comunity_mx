@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgis/postgis:latest
+    image: postgis/postgis:16-3.4
+    platform: linux/amd64
     container_name: comunity-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-comunity}
@@ -35,30 +34,9 @@ services:
       timeout: 5s
       retries: 5
 
-  # Backend service (uncomment when ready)
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   container_name: comunity-backend
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #   environment:
-  #     DATABASE_URL: postgresql://comunity:desarrollo123@postgres:5432/comunity_dev
-  #     REDIS_URL: redis://redis:6379
-  #     NODE_ENV: development
-  #     JWT_SECRET: tu_secreto
-  #   volumes:
-  #     - ./backend:/app
-  #     - /app/node_modules
-  #   networks:
-  #     - comunity-network
-  #   command: npm run dev
+  # Docker is intentionally limited to local development dependencies.
+  # The FastAPI backend runs from backend/.venv locally and deploys to Railway
+  # with Supabase as the hosted database.
 
   # Frontend service (uncomment when ready)
   # frontend:

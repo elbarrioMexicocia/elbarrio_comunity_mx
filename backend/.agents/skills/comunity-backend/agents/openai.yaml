@@ -1,4 +1,4 @@
 interface:
   display_name: "Comunity Backend"
-  short_description: "Backend setup, migrations, and Railway workflow"
-  default_prompt: "Use $comunity-backend to work on the Comunity FastAPI backend safely."
+  short_description: "FastAPI, Supabase Auth, migrations, and Railway"
+  default_prompt: "Use $comunity-backend to work safely on the Comunity FastAPI and Supabase backend."

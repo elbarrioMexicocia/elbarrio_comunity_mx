@@ -54,8 +54,9 @@ cd ..
 # 3. Configurar frontend cuando exista
 cp frontend/.env.example frontend/.env
 
-# 4. Levantar PostGIS local y migrar
-docker-compose up -d postgres
+# 4. Levantar Supabase local (Auth, Postgres/PostGIS y Mailpit) y migrar
+supabase start
+docker-compose up -d redis
 cd backend
 python scripts/dev.py migrate
 
@@ -66,8 +67,9 @@ python scripts/dev.py run
 ### Docker Local
 
 ```bash
-# Docker se usa para dependencias locales, no para producción del backend
-docker-compose up -d postgres
+# Supabase CLI gestiona Auth, Postgres/PostGIS y Mailpit localmente
+supabase start
+docker-compose up -d redis
 
 # Ejecutar migraciones desde el backend venv
 cd backend

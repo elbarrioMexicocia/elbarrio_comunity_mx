@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     environment: str = "development"
     database_url: str = "postgresql+psycopg://comunity:desarrollo123@localhost:5432/comunity_dev"
     cors_origins: list[str] = []
+    supabase_url: str = "http://127.0.0.1:54321"
+    supabase_publishable_key: str = ""
+    supabase_jwt_issuer: str | None = None
+    supabase_jwks_cache_seconds: int = 600
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -31,6 +35,10 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [origin.strip() for origin in value.split(",") if origin.strip()]
         return value
+
+    @property
+    def jwt_issuer(self) -> str:
+        return self.supabase_jwt_issuer or f"{self.supabase_url.rstrip('/')}/auth/v1"
 
 
 @lru_cache

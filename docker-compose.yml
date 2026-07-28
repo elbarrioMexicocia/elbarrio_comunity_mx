@@ -1,24 +1,4 @@
 services:
-  postgres:
-    image: postgis/postgis:16-3.4
-    platform: linux/amd64
-    container_name: comunity-postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-comunity}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-desarrollo123}
-      POSTGRES_DB: ${POSTGRES_DB:-comunity_dev}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - comunity-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U comunity"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   redis:
     image: redis:7-alpine
     container_name: comunity-redis
@@ -34,9 +14,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # Docker is intentionally limited to local development dependencies.
-  # The FastAPI backend runs from backend/.venv locally and deploys to Railway
-  # with Supabase as the hosted database.
+  # Supabase CLI owns local Auth, Postgres/PostGIS, and Mailpit. This compose
+  # file intentionally retains only the application-owned Redis dependency.
 
   # Frontend service (uncomment when ready)
   # frontend:
@@ -58,7 +37,6 @@ services:
   #   command: npm run dev
 
 volumes:
-  postgres_data:
   redis_data:
 
 networks:

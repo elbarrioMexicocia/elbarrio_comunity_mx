@@ -23,10 +23,12 @@ source .venv/bin/activate
 cp .env.example .env
 ```
 
-Start local PostGIS from the repository root. Docker is for local dependencies only; hosted database environments should use Supabase.
+Start the local Supabase stack from the repository root. It provides Auth,
+Postgres/PostGIS, and Mailpit; Docker Compose now contains only Redis.
 
 ```bash
-docker-compose up -d postgres
+supabase start
+docker-compose up -d redis
 ```
 
 Run migrations:
@@ -80,6 +82,16 @@ Recommended service config:
 - Health check path: `/health`
 - `RAILPACK_PYTHON_VERSION=3.12`
 - `DATABASE_URL=<Supabase pooled or direct connection URL>`
+- `SUPABASE_URL=<hosted project URL>`
+- `SUPABASE_PUBLISHABLE_KEY=<hosted publishable/anon key>`
+- `SUPABASE_JWT_ISSUER=<hosted project URL>/auth/v1` (optional override)
+
+Configure the hosted Supabase Auth project with email confirmation, six-digit OTPs,
+12-character minimum passwords, one-hour JWTs, and default refresh-token rotation.
+Use an asymmetric signing key (ES256 preferred) so the API can validate access tokens
+from the project JWKS without a shared JWT secret.
+Configure Resend as Supabase custom SMTP (disable link tracking); SMTP credentials do
+not belong in Railway. Local messages are available in Mailpit after `supabase start`.
 
 Run migrations after wiring `DATABASE_URL`:
 
@@ -95,5 +107,10 @@ The first migration creates only the tables needed for the initial marketplace f
 - `broadcasts`
 - `conversations`
 - `messages`
+
+Run `supabase start`, copy the local values from `supabase status` into
+`backend/.env`, then apply the application migration with `python scripts/dev.py
+migrate`. The Supabase CLI owns platform schemas; Alembic owns only the public
+marketplace schema.
 
 Deferred until product workflows need them: transactions, ratings, saved offers, notifications, activity logs, device state, presence, images, and analytics counters.
